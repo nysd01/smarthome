@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ room.name }}{% endblock %}
+
+{% block content %}
+<section class="devices">
+  <header class="rooms-header">
+    <h2>Devices in {{ room.name }}</h2>
+    <a href="{% url 'add_device' room.id %}" class="btn-add-room">+ Add Device</a>
+  </header>
+
+  <div class="rooms-grid">
+    {% for device in room.devices.all %}
+      <div class="device-card">
+        <div>
+          <h4>{{ device.name }}</h4>
+          <p class="device-type">{{ device.device_type }}</p>
+        </div>
+        <div class="device-actions">
+          {% if device.status %}
+            <a href="{% url 'toggle_device' device.id %}">
+              <button class="deactivate">Turn Off</button>
+            </a>
+          {% else %}
+            <a href="{% url 'toggle_device' device.id %}">
+              <button>Turn On</button>
+            </a>
+          {% endif %}
+          <a href="{% url 'delete_device' device.id %}">
+            <button class="deactivate">Delete</button>
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <p class="no-rooms">No devices in this room yet.</p>
+    {% endfor %}
+  </div>
+
+  <p><a href="{% url 'dashboard' %}" class="btn-view">← Back to Dashboard</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Add Room{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>Add a New Room</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <label for="name">Room Name</label>
+    <input type="text" name="name" id="name" placeholder="e.g. Living Room" required>
+    <button type="submit">Create Room</button>
+  </form>
+  <p><a href="{% url 'dashboard' %}" class="btn-view">← Cancel</a></p>
+</div>
+{% endblock %}

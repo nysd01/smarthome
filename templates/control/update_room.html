@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Room{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>Update Room: {{ room.name }}</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update</button>
+  </form>
+</div>
+{% endblock %}

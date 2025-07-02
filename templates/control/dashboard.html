@@ -1,21 +1,48 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<h2>SmartHome Dashboard</h2>
-<div class="row">
-  <div class="col">
-    <form method="POST" action="{% url 'toggle_light' %}">
-      {% csrf_token %}
-      <button class="btn btn-warning">Toggle Light</button>
-    </form>
+<section class="stats">
+  <div class="stat-card">
+    <h3>🌡️ Temperature</h3>
+    <p>{{ temperature }}°C</p>
   </div>
-  <div class="col">
-    <form method="POST" action="{% url 'open_door' %}">
-      {% csrf_token %}
-      <button class="btn btn-success">Open Door</button>
-    </form>
+  <div class="stat-card">
+    <h3>🔥 Fire Alert</h3>
+    <p class="{% if fire_alert %}alert{% endif %}">
+      {% if fire_alert %}ALERT!{% else %}Safe{% endif %}
+    </p>
   </div>
-</div>
-<div class="mt-4">
-  <h4>Temperature: {{ temperature }} °C</h4>
-</div>
+</section>
+<section class="rooms-header">
+  <h2>Welcome to  D-HOME</h2>
+
+  <!-- Toggle All LEDs -->
+  <form method="post" action="{% url 'toggle_all_leds' %}" class="inline-form">
+    {% csrf_token %}
+    <button type="submit" class="btn-toggle-leds">
+      🔆 Toggle All LEDs
+    </button>
+  </form>
+</section>
+
+<section class="rooms">
+  <header class="rooms-header">
+    <h2>Your Rooms</h2>
+    <a href="{% url 'add_room' %}" class="btn-add-room">+ Add Room</a>
+  </header>
+
+  <div class="rooms-grid">
+    {% for room in rooms %}
+      <div class="room-card">
+        <h4>{{ room.name }} <a href="{% url 'update_room' room.id %}" class="btn-edit-room">✏️ Rename</a>
+</h4>
+        <p>{{ room.devices.count }} device{% if room.devices.count != 1 %}s{% endif %}</p>
+        <a href="{% url 'room_detail' room.id %}" class="btn-view">View Devices →</a>
+      </div>
+    {% empty %}
+      <p class="no-rooms">No rooms yet. Click “+ Add Room” to get started.</p>
+    {% endfor %}
+  </div>
+</section>
 {% endblock %}
