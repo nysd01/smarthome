@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>SmartHome Dashboard</h2>
+<div class="row">
+  <div class="col">
+    <form method="POST" action="{% url 'toggle_light' %}">
+      {% csrf_token %}
+      <button class="btn btn-warning">Toggle Light</button>
+    </form>
+  </div>
+  <div class="col">
+    <form method="POST" action="{% url 'open_door' %}">
+      {% csrf_token %}
+      <button class="btn btn-success">Open Door</button>
+    </form>
+  </div>
+</div>
+<div class="mt-4">
+  <h4>Temperature: {{ temperature }} °C</h4>
+</div>
+{% endblock %}
