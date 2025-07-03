@@ -14,7 +14,18 @@
         <div>
           <h4>{{ device.name }}</h4>
           <p class="device-type">{{ device.device_type }}</p>
+          
+          <!-- ✅ Show Arduino-controlled status -->
+          <p>
+            Status: 
+            {% if device.status %}
+              <span style="color: green; font-weight: bold;">ON</span>
+            {% else %}
+              <span style="color: gray; font-weight: bold;">OFF</span>
+            {% endif %}
+          </p>
         </div>
+
         <div class="device-actions">
           {% if device.status %}
             <a href="{% url 'toggle_device' device.id %}">

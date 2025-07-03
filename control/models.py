@@ -1,5 +1,6 @@
 # control/models.py
 from django.db import models
+from django.utils import timezone
 
 class DeviceStatus(models.Model):
     device_name = models.CharField(max_length=100)
@@ -19,3 +20,12 @@ class Device(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.room.name})"
+    
+
+
+class Temperature(models.Model):
+    value = models.FloatField()            # temperature value
+    timestamp = models.DateTimeField(default=timezone.now)  # when it was recorded
+
+    def __str__(self):
+            return f"{self.value} °C at {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"

@@ -2,6 +2,8 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+
+<!-- 🔥 Temperature & Fire Alert Section -->
 <section class="stats">
   <div class="stat-card">
     <h3>🌡️ Temperature</h3>
@@ -14,10 +16,11 @@
     </p>
   </div>
 </section>
-<section class="rooms-header">
-  <h2>Welcome to  D-HOME</h2>
 
-  <!-- Toggle All LEDs -->
+<!-- 🏠 Room Management -->
+<section class="rooms-header">
+  <h2>Welcome to D-HOME</h2>
+
   <form method="post" action="{% url 'toggle_all_leds' %}" class="inline-form">
     {% csrf_token %}
     <button type="submit" class="btn-toggle-leds">
@@ -35,8 +38,7 @@
   <div class="rooms-grid">
     {% for room in rooms %}
       <div class="room-card">
-        <h4>{{ room.name }} <a href="{% url 'update_room' room.id %}" class="btn-edit-room">✏️ Rename</a>
-</h4>
+        <h4>{{ room.name }} <a href="{% url 'update_room' room.id %}" class="btn-edit-room">✏️ Rename</a></h4>
         <p>{{ room.devices.count }} device{% if room.devices.count != 1 %}s{% endif %}</p>
         <a href="{% url 'room_detail' room.id %}" class="btn-view">View Devices →</a>
       </div>
@@ -45,4 +47,5 @@
     {% endfor %}
   </div>
 </section>
+
 {% endblock %}

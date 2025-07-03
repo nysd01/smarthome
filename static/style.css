@@ -382,3 +382,14 @@ main {
 .btn-edit-room:hover {
   background: #1976d2;
 }
+
+.alert {
+  color: red;
+  font-weight: bold;
+}
+.stat-card {
+  background: #c3bbbb;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 8px;
+}

@@ -4,8 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 
-from .models import Room, Device
+from .models import Room, Device, Temperature  # ✅ Added Temperature
 from .forms import CustomUserCreationForm, RoomUpdateForm
+from .mqtt_client import publish_message
 
 # 🔒 Authentication views
 
@@ -22,7 +23,7 @@ def login_view(request):
             messages.error(request, 'Invalid username or password.')
     return render(request, 'registration/login.html')
 
-# views.py
+
 def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -36,27 +37,36 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
+
 def logout_view(request):
     logout(request)
     return redirect('login')
+
 
 # 🏠 Dashboard and Room Views
 
 @login_required
 def dashboard(request):
     rooms = Room.objects.prefetch_related('devices').all()
-    temperature = 26.5  # Replace with actual sensor value
-    fire_alert = False  # Replace with actual condition
+
+    # ✅ Get the latest temperature from the database
+    latest_temp = Temperature.objects.last()
+    temperature = latest_temp.value if latest_temp else 0.0
+
+    fire_alert = temperature > 50  # fire condition threshold
+
     return render(request, 'control/dashboard.html', {
         'rooms': rooms,
         'temperature': temperature,
         'fire_alert': fire_alert,
     })
 
+
 @login_required
 def room_detail(request, room_id):
     room = get_object_or_404(Room, id=room_id)
     return render(request, 'control/room_detail.html', {'room': room})
+
 
 @login_required
 def add_room(request):
@@ -67,6 +77,7 @@ def add_room(request):
             messages.success(request, "Room added.")
         return redirect('dashboard')
     return render(request, 'control/add_room.html')
+
 
 @login_required
 def update_room(request, room_id):
@@ -80,6 +91,7 @@ def update_room(request, room_id):
     else:
         form = RoomUpdateForm(instance=room)
     return render(request, 'control/update_room.html', {'form': form, 'room': room})
+
 
 # 💡 Device Views
 
@@ -95,6 +107,7 @@ def add_device(request, room_id):
         return redirect('dashboard')
     return render(request, 'control/add_device.html', {'room': room})
 
+
 @login_required
 def delete_device(request, device_id):
     device = get_object_or_404(Device, id=device_id)
@@ -102,22 +115,38 @@ def delete_device(request, device_id):
     messages.success(request, "Device deleted.")
     return redirect('dashboard')
 
+
 @login_required
 def toggle_device(request, device_id):
     device = get_object_or_404(Device, id=device_id)
     device.status = not device.status
     device.save()
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'status': device.status})
-    return redirect(request.GET.get('next') or request.META.get('HTTP_REFERER') or 'dashboard')
+
+    payload = "on" if device.status else "off"
+    topic = f"nysd/derek/led/{device.id}/control"  # ✅ Matches MQTT topic
+
+    publish_message(topic, payload)  # Send MQTT message
+
+    return redirect('room_detail', room_id=device.room.id)
+
 
 @login_required
 def toggle_all_leds(request):
     leds = Device.objects.filter(device_type__iexact='LED')
+
+    # Determine ON/OFF based on current LED status
+    turn_on = not all(led.status for led in leds)
+
     for led in leds:
-        led.status = not led.status
+        led.status = turn_on
         led.save()
-    return redirect('dashboard')
+
+        payload = "on" if turn_on else "off"
+        topic = f"nysd/home123/led/{led.id}/control"
+        publish_message(topic, payload)
+
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))
+
 
 @login_required
 def open_door(request):

@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
      'control',
+      "channels",
 ]
+
+ASGI_APPLICATION = "smarthome.asgi.application"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -16,5 +16,5 @@ urlpatterns = [
     path('room/<int:room_id>/update/', views.update_room, name='update_room'),
     path('toggle-all-leds/', views.toggle_all_leds, name='toggle_all_leds'),
     path('logout/', LogoutView.as_view(), name='logout'),
-
+    
 ]
