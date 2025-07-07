@@ -17,10 +17,9 @@
   </div>
 </section>
 
-<!-- 🏠 Room Management -->
+<!-- 🏠 Welcome & Toggle LEDs -->
 <section class="rooms-header">
   <h2>Welcome to D-HOME</h2>
-
   <form method="post" action="{% url 'toggle_all_leds' %}" class="inline-form">
     {% csrf_token %}
     <button type="submit" class="btn-toggle-leds">
@@ -29,6 +28,7 @@
   </form>
 </section>
 
+<!-- 🏠 Room Listing -->
 <section class="rooms">
   <header class="rooms-header">
     <h2>Your Rooms</h2>
@@ -48,4 +48,34 @@
   </div>
 </section>
 
+<section class="led-brightness">
+  <h3>🎛️ Control LED Brightness</h3>
+  {% for room in rooms %}
+    <h4>{{ room.name }}</h4>
+    <ul style="list-style: none; padding-left: 0;">
+      {% for device in room.devices.all %}
+        {% if device.device_type|lower == "led" or device.device_type|lower == "light" %}
+        <li style="margin-bottom: 1em; background: #222; padding: 10px; border-radius: 10px;">
+          <form method="post" action="{% url 'set_led_brightness' device.id %}" style="display: flex; align-items: center; gap: 10px;">
+            {% csrf_token %}
+            <label style="color: #ccc; min-width: 100px;">{{ device.name }}</label>
+            <input type="range" name="brightness" min="0" max="255" step="1"
+                   value="{{ device.brightness }}"
+                   oninput="this.nextElementSibling.value = this.value">
+            <output style="min-width: 30px;">{{ device.brightness }}</output>
+            <button type="submit" class="btn-small">Apply</button>
+          </form>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</section>
+
+
 {% endblock %}
+<script>
+  setInterval(() => {
+    location.reload();
+  }, 10000); // every 10 seconds
+</script>

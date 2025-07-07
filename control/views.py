@@ -8,6 +8,8 @@ from .models import Room, Device, Temperature  # ✅ Added Temperature
 from .forms import CustomUserCreationForm, RoomUpdateForm
 from .mqtt_client import publish_message
 
+from django.views.decorators.csrf import csrf_exempt
+from .mqtt_client import publish_message
 # 🔒 Authentication views
 
 def login_view(request):
@@ -53,7 +55,7 @@ def dashboard(request):
     latest_temp = Temperature.objects.last()
     temperature = latest_temp.value if latest_temp else 0.0
 
-    fire_alert = temperature > 50  # fire condition threshold
+    fire_alert = temperature > 30  # fire condition threshold
 
     return render(request, 'control/dashboard.html', {
         'rooms': rooms,
@@ -153,3 +155,17 @@ def open_door(request):
     # Placeholder for sending command to hardware
     messages.success(request, "Door opened!")
     return redirect('dashboard')
+
+
+
+@login_required
+def set_led_brightness(request, device_id):
+    if request.method == "POST":
+        brightness = int(request.POST.get("brightness", 128))
+        device = get_object_or_404(Device, id=device_id)
+        device.brightness = brightness
+        device.save()
+
+        topic = f"nysd/derek/led/{device.id}/brightness"
+        publish_message(topic, str(brightness))
+    return redirect("dashboard")

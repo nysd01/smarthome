@@ -14,13 +14,14 @@ class Room(models.Model):
 
 class Device(models.Model):
     name = models.CharField(max_length=100)
-    device_type = models.CharField(max_length=50)  # e.g., Light, Fan, Sensor
+    device_type = models.CharField(max_length=50)
     status = models.BooleanField(default=False)
+    brightness = models.IntegerField(default=128)  # ✅ New field
     room = models.ForeignKey(Room, related_name='devices', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name} ({self.room.name})"
-    
+
 
 
 class Temperature(models.Model):
