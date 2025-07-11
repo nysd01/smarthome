@@ -68,7 +68,7 @@ def main():
 
     try:
         print(f"[MQTT] Connecting to {MQTT_BROKER}:{MQTT_PORT}")
-        client.connect(MQTT_BROKER, MQTT_PORT, 10000)
+        client.connect(MQTT_BROKER, MQTT_PORT, 9000)
         client.loop_forever()
     except Exception as e:
         print(f"[MQTT] ❌ Connection error: {e}")
