@@ -12,6 +12,13 @@ from .mqtt_client import publish_message
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+from django.http import HttpResponse
+from django.core.management import call_command
+
+def migrate_now(request):
+    call_command("migrate")
+    return HttpResponse("Migrations applied successfully.")
+
 # 🔒 Authentication views
 
 def login_view(request):
