@@ -28,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["d-home.onrender.com", "localhost", "127.0.0.1"]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://d-home.onrender.com',
+    'https://www.d-home.onrender.com',
+]
+
 
 
 # Application definition
