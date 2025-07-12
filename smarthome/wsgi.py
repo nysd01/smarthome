@@ -14,3 +14,9 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'smarthome.settings')
 
 application = get_wsgi_application()
+
+# ✅ Start MQTT listener here
+import threading
+def start_mqtt():
+    import control.mqtt_client
+threading.Thread(target=start_mqtt, daemon=True).start()
