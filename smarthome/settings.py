@@ -88,13 +88,30 @@ WSGI_APPLICATION = 'smarthome.wsgi.application'
 
 import os
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join('/tmp', 'db.sqlite3'),  # ✅ must be in /tmp
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join('/tmp', 'db.sqlite3'),  # ✅ must be in /tmp
+#     }
+# }
 
+import dj_database_url
+import os
+
+import os
+import dj_database_url
+
+if os.getenv("RENDER"):
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ.get('postgresql://dhome_db_user:6CArryF58ennKqzhQksTAmM3cz2BwHKA@dpg-d1outmjipnbc73ff18r0-a.oregon-postgres.render.com/dhome_db'))
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
