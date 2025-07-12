@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 
+{% block extra_head %}
+  <meta http-equiv="refresh" content="10">  <!-- 🔁 Refresh every 10 seconds -->
+{% endblock %}
 {% block content %}
 
 <!-- 🔥 Temperature & Fire Alert Section -->
